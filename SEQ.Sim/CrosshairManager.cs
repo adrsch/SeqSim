@@ -84,7 +84,7 @@ namespace SEQ.Sim
                 PlayerController.S.OnPush += () =>
                 {
                     PerturbTime = Time.time;
-                    var amt = MathUtil.Clamp01((PlayerController.S.CurrentVelocity.Magnitude - 50f) / 70f);
+                    var amt = MathUtil.Clamp01((PlayerController.S.ScaledVelocity.Magnitude - 50f) / 70f);
                     PerturbSpread = MathUtil.Lerp(6f, 28f, amt);
                     PerturbDuration = 0.5f;
                     PerturbLength = MathUtil.Lerp(8f, 24, amt);
@@ -152,7 +152,7 @@ namespace SEQ.Sim
             if (PlayerController.S == null)
                 return;
 
-            var speed = PlayerController.S.CurrentVelocity;
+            var speed = PlayerController.S.ScaledVelocity;
             // var smoothTime = MathUtil.Lerp(0.001f, 0.1f, MathUtil.Clamp01((speed.Magnitude - 70f) / 170f));
             var smoothTime = PlayerController.S.InputManager.IsCancelling() ? 0 : 0.1f;
 

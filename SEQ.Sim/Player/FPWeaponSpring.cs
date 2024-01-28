@@ -21,7 +21,7 @@ namespace SEQ.Sim
     public class FPWeaponSpring : SyncScript
     {
          TransformComponent View;
-         PlayerController Player;
+        PlayerController Player;
         Quaternion Derivative;
         Quaternion Current;
         public float SmoothTime = 0.3f;

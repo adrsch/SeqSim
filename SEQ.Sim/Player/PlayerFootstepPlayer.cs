@@ -25,7 +25,7 @@ namespace SEQ.Sim
         }
         public List<SurfaceEffectInfo> Effects = new List<SurfaceEffectInfo>();
         public AudioEmitterComponent AudioEmitter;
-        public PlayerController PlayerMovement;
+        public QController PlayerMovement;
         float FootstepTimeSprint = 0.34f;
         float FootstepTimeWalk = 0.44f;
         float GroundResetTime = 0.3f;
