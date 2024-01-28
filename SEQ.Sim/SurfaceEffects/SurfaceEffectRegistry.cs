@@ -110,6 +110,12 @@ namespace SEQ.Sim
         void SpawnPermaHole(HitResult res, Vector3 forward, SurfaceType t)
         {
             var st  = ActorSpeciesRegistry.SpawnNewState("bullethole");
+            if (st == null)
+            {
+                Logger.Log(Channel.Data, LogPriority.Warning, $"No bullet hole prefab found.");
+                return;
+
+            }
             st.Position = res.Point + res.Normal * 0.05f;
             var ToSaveRotation = Quaternion.LookRotation(res.Normal, forward);//(in Vector3.forward, in res.Normal);
             st.Rotation = Quaternion.Identity;
