@@ -71,7 +71,6 @@ namespace SEQ.Sim
         public ISensorTarget Target { get; private set; }
         public IPerceptible TargetPerceptible;
         public ISensor SpottingSensor { get; private set; }
-        public IFactionProvder PreferredFaction;// = Faction.none;
 
         public Dictionary<IPerceptible, PerceptibleDetection> Detected = new();
 
@@ -89,13 +88,6 @@ namespace SEQ.Sim
             filter = new AcceptAllFilter();
         }
 
-        public SensorAggregator(List<ISensor> sensors, IFactionProvder f)
-        {
-            this.sensors = sensors;
-            //    filter = new AcceptRelationsFilter { faction = f };
-
-            filter = new AcceptAllFilter();
-        }
         public IPerceptible This;
 
         // TODO this is tiem stuff

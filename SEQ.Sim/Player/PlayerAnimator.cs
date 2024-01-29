@@ -8,20 +8,41 @@ using System.Text;
 using System.Threading.Tasks;
 using static Stride.Graphics.GeometricPrimitives.GeometricPrimitive;
 using SEQ.Script;
+using SEQ.Script.Core;
 
 namespace SEQ.Sim
 {
     public class PlayerAnimator : StartupScript, IUsableUser, IPerceptible
     {
         public static PlayerAnimator S;
-
+        [DataMemberIgnore]
+        public Actor Actor;
         public PerceptibleStatus Status => Damageable.IsDead ? PerceptibleStatus.Dead : Damageable.IsDamaged ? PerceptibleStatus.Hurt : PerceptibleStatus.Default;
         public override void Start()
         {
             base.Start();
             S = this;
             World.RegisterPerceptible(this);
+            Actor = Entity.Get<Actor>();
+            Actor.OnValueChanged += OnActorUpdated;
+            OnActorUpdated();
         }
+
+        void OnActorUpdated()
+        {
+            if (Actor.State.Vars.ContainsKey("faction"))
+            {
+                var stringFaction = Actor.State.GetVar<string>("faction");
+                foreach (var rel in FactionManager.S.Relations)
+                {
+                    if (rel.Cvar == stringFaction)
+                    {
+                        Faction = rel.Provider;
+                    }
+                }
+            }
+        }
+
         public override void Cancel()
         {
             base.Cancel();
@@ -34,7 +55,7 @@ namespace SEQ.Sim
         public bool IsUnequipping;
         public Entity ParentEnt => FPWeaponSpring.S.Entity;
 
-        public SimDamageable Damageable;
+        public SimDamageable Damageable { get; set; }
 
         public event Action<Weapon> OnShootEvent;
         public AudioEmitterComponent PlayerAudioEmitter;
@@ -42,7 +63,25 @@ namespace SEQ.Sim
 
         public AudioEmitter AudioPerceptible { get; set; }
 
-        public IFactionProvder Faction { get; set; }
+        public event Action OnFactionChanged;
+        [DataMemberIgnore]
+        IFactionProvder _Faction;
+        [DataMemberIgnore]
+        public IFactionProvder Faction
+        {
+            get => _Faction;
+            set
+            {
+                if (_Faction != value)
+                {
+                    _Faction = value;
+                    OnFactionChanged?.Invoke();
+                }
+                foreach (var vp in VisualPerceptibles)
+                    vp._Faction = value;
+                AudioPerceptible._Faction = value;
+            }
+        }
 
         public bool IsArmed => CurrentWeapon != null;
 

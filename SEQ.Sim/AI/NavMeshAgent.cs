@@ -66,11 +66,15 @@ namespace SEQ.Sim
 
                     if (snapHit.Succeeded)
                     {
+                        FallVelocity = 0f;
                         Position = new Vector3(to.x, snapHit.Point.y, to.z);
                     }
                     else
                     {
-                        NewDirection();
+                        FallVelocity += PhysicsConstants.Gravity.ToXenko() * dt;
+
+                        Position = new Vector3(to.x, from.y - FallVelocity * dt, to.z);
+                        // NewDirection();
                     }
 
                 }
@@ -94,12 +98,20 @@ namespace SEQ.Sim
 
         }
 
+        float FallVelocity;
+
         void SnapToGround(Vector3 moved, float dt)
         {
             var hit = (Rb.Simulation.Raycast(Transform.WorldPosition + Vector3.up * 2, Transform.WorldPosition - Vector3.up * 4));
             if (hit.Succeeded)
             {
+                FallVelocity = 0f;
                 moved = new Vector3(moved.x, hit.Point.y, moved.z);
+            }
+            else
+            {
+                FallVelocity += PhysicsConstants.Gravity.ToXenko() * dt;
+                moved = new Vector3(moved.x, hit.Point.y - FallVelocity * dt, moved.z);
             }
             Position = moved;
         }

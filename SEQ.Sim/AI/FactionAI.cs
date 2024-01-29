@@ -1,5 +1,4 @@
 ﻿
-using Silk.NET.OpenXR;
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Engine;
@@ -42,7 +41,7 @@ namespace SEQ.Sim
       //  public string DisplayName => Entity.Name;
         public Actor Actor;
         public NavMeshAgent Agent;
-        public SimDamageable Damageable;
+        public SimDamageable Damageable { get; set; }
         public CharacterAnimator Animator;
         //  public EventWrapper SpottedEvent;
         [DataMemberIgnore]
@@ -51,7 +50,28 @@ namespace SEQ.Sim
         public ISensorTarget Target { get; private set; }
         public ISensorTarget EffectiveTarget => Target ?? LastTarget;
         public PerceptibleStatus Status => Damageable.IsDead ? PerceptibleStatus.Dead : Damageable.IsDamaged ? PerceptibleStatus.Hurt : PerceptibleStatus.Default;
-        public IFactionProvder Faction { get; set; }
+
+
+        public event Action OnFactionChanged;
+        [DataMemberIgnore]
+        IFactionProvder _Faction;
+        [DataMemberIgnore]
+        public IFactionProvder Faction 
+        { 
+            get => _Faction; 
+            set 
+            {
+                if (_Faction != value) 
+                {
+                    _Faction = value;
+                    OnFactionChanged?.Invoke();
+                }
+                foreach (var vp in VisualPerceptibles)
+                    vp._Faction = value;
+                AudioPerceptible._Faction = value;
+            }
+        }
+
 
         public TransformComponent ShootTransform;
 

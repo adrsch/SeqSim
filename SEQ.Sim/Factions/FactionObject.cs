@@ -17,7 +17,9 @@ namespace SEQ.Sim
     public interface IPerceptible
     {
         IFactionProvder Faction { get; set; }
+        event Action OnFactionChanged;
         bool IsArmed { get; }
+        SimDamageable Damageable { get; set; }
         PerceptibleStatus Status { get; }
         Vector3 GetPosition();
 
